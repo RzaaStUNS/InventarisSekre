@@ -56,19 +56,26 @@ export const useInventory = () => {
     }
   }, [fetchItems]);
 
-  const updateItem = useCallback(async (id: string, updates: Partial<InventoryItem>) => {
-    try {
-      await api.put(`/inventories/${id}`, updates);
-      await fetchItems(); 
-    } catch (err) {
-      console.error('Gagal update item:', err);
-    }
-  }, [fetchItems]);
-
-  const deleteItem = async (id: string) => {
+ const updateItem = useCallback(async (id: string, updates: Partial<InventoryItem>) => {
   try {
-    // Pastikan URL-nya benar dan mengarah ke route apiResource
-    await api.delete(`/inventories/${id}`); 
+    // Gunakan POST sebagai pengganti PUT untuk mengakali limitasi server hosting
+    // Kita kirim sebagai object biasa, Axios akan konversi ke JSON
+    await api.post(`/inventories/${id}`, {
+      ...updates,
+      _method: 'PUT' // <--- Kuncinya di sini (Laravel Method Spoofing)
+    });
+    await fetchItems(); 
+  } catch (err) {
+    console.error('Gagal update item:', err);
+  }
+}, [fetchItems]);;
+
+ const deleteItem = async (id: string) => {
+  try {
+    // Pakai POST dengan bisikan _method DELETE
+    await api.post(`/inventories/${id}`, {
+      _method: 'DELETE' // <--- Laravel akan menganggap ini request DELETE
+    }); 
     setItems(prev => prev.filter(item => item.id !== id));
   } catch (err) {
     console.error("Gagal hapus:", err);
