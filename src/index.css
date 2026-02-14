@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Kawaii Inventory Design System - Super Cute Pastel Theme */
+
+@layer base {
+  :root {
+    /* Main pastel palette */
+    --background: 200 60% 97%;
+    --foreground: 340 40% 30%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 340 40% 30%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 340 40% 30%;
+
+    /* Primary - Soft Sky Blue */
+    --primary: 197 72% 68%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Cream Yellow */
+    --secondary: 45 100% 76%;
+    --secondary-foreground: 340 40% 30%;
+
+    /* Accent - Rose Pink */
+    --accent: 345 60% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    /* Muted - Light Blue Gray */
+    --muted: 200 50% 94%;
+    --muted-foreground: 200 20% 50%;
+
+    /* Status colors */
+    --success: 160 50% 75%;
+    --success-foreground: 160 60% 25%;
+    --warning: 45 100% 76%;
+    --warning-foreground: 45 80% 25%;
+    --danger: 345 60% 75%;
+    --danger-foreground: 345 60% 30%;
+
+    --destructive: 345 60% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 200 40% 88%;
+    --input: 200 40% 92%;
+    --ring: 197 72% 68%;
+
+    --radius: 1rem;
+
+    /* Sidebar */
+    --sidebar-background: 200 60% 97%;
+    --sidebar-foreground: 340 40% 30%;
+    --sidebar-primary: 197 72% 68%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 200 50% 94%;
+    --sidebar-accent-foreground: 340 40% 30%;
+    --sidebar-border: 200 40% 88%;
+    --sidebar-ring: 197 72% 68%;
+  }
+
+  .dark {
+    --background: 220 30% 12%;
+    --foreground: 200 60% 95%;
+    --card: 220 30% 15%;
+    --card-foreground: 200 60% 95%;
+    --popover: 220 30% 15%;
+    --popover-foreground: 200 60% 95%;
+    --primary: 197 72% 68%;
+    --primary-foreground: 220 30% 12%;
+    --secondary: 45 80% 70%;
+    --secondary-foreground: 220 30% 12%;
+    --accent: 345 60% 65%;
+    --accent-foreground: 0 0% 100%;
+    --muted: 220 25% 20%;
+    --muted-foreground: 200 30% 70%;
+    --destructive: 345 60% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 160 50% 40%;
+    --success-foreground: 160 60% 90%;
+    --warning: 45 80% 50%;
+    --warning-foreground: 45 80% 95%;
+    --danger: 345 60% 45%;
+    --danger-foreground: 345 60% 95%;
+    --border: 220 25% 25%;
+    --input: 220 25% 20%;
+    --ring: 197 72% 68%;
+    --sidebar-background: 220 30% 12%;
+    --sidebar-foreground: 200 60% 95%;
+    --sidebar-primary: 197 72% 68%;
+    --sidebar-primary-foreground: 220 30% 12%;
+    --sidebar-accent: 220 25% 20%;
+    --sidebar-accent-foreground: 200 60% 95%;
+    --sidebar-border: 220 25% 25%;
+    --sidebar-ring: 197 72% 68%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-nunito;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='8' fill='%2399C3E4' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E"), auto;
+  }
+
+  a, button, [role="button"], .cursor-pointer {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='14' cy='14' r='10' fill='%23E16F94' stroke='%23fff' stroke-width='2'/%3E%3Ccircle cx='14' cy='14' r='4' fill='%23fff'/%3E%3C/svg%3E"), pointer;
+  }
+}
+
+@layer components {
+  /* Card styles */
+  .card-kawaii {
+    @apply bg-card rounded-3xl border-2 border-white/50 backdrop-blur-sm transition-all duration-300;
+    box-shadow: 0 8px 30px -8px hsl(200 60% 70% / 0.3);
+  }
+
+  .card-kawaii:hover {
+    box-shadow: 0 12px 40px -12px hsl(345 60% 70% / 0.4);
+    transform: translateY(-2px);
+  }
+
+  /* Button cute variants */
+  .btn-kawaii {
+    @apply rounded-2xl font-semibold transition-all duration-300;
+    box-shadow: 0 4px 20px -4px hsl(200 60% 80% / 0.5);
+  }
+
+  .btn-kawaii:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 12px 40px -12px hsl(345 60% 70% / 0.4);
+  }
+
+  /* Badge cute styles */
+  .badge-ada {
+    @apply bg-success text-success-foreground;
+  }
+
+  .badge-hilang {
+    @apply bg-danger text-danger-foreground;
+  }
+}
