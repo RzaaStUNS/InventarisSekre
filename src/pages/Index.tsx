@@ -23,12 +23,15 @@ const Index = () => {
     setSearchQuery,
     categoryFilter,
     setCategoryFilter,
-    // Status filter dihapus dari sini
     conditionFilter,
     setConditionFilter,
     addItem,
     updateItem,
     deleteItem,
+    // AMBIL STATE ADMIN DARI HOOKS
+    isAdmin,
+    loginAsAdmin,
+    logoutAdmin
   } = useInventory();
 
   const handleAddItem = async (data: Omit<InventoryItem, 'id' | 'nomorBarang' | 'createdAt' | 'updatedAt'>) => {
@@ -74,11 +77,14 @@ const Index = () => {
             onSearchChange={setSearchQuery}
             categoryFilter={categoryFilter}
             onCategoryChange={(val) => setCategoryFilter(val as Category | 'all')}
-            // Bagian Status dihapus total
             conditionFilter={conditionFilter}
             onConditionChange={(val) => setConditionFilter(val as Condition | 'all')}
             onEdit={handleOpenEdit}
             onDelete={deleteItem}
+            // KIRIM PROPS ADMIN KE VIEW
+            isAdmin={isAdmin}
+            onAdminLogin={loginAsAdmin}
+            onAdminLogout={logoutAdmin}
           />
         );
       case 'stats':
@@ -100,7 +106,11 @@ const Index = () => {
         </main>
       </div>
 
-      <FloatingActionButton onClick={() => setShowForm(true)} />
+      {/* TOMBOL TAMBAH HANYA MUNCUL JIKA ADMIN */}
+      {isAdmin && (
+        <FloatingActionButton onClick={() => setShowForm(true)} />
+      )}
+      
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
 
       {showForm && (
