@@ -30,7 +30,7 @@ const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ isOpen, onClose, onLo
             Admin Control
           </DialogTitle>
           <DialogDescription className="text-center text-muted-foreground">
-            Masukkan password rahasia untuk mengaktifkan fitur CRUD.
+            Masukkan Password Control Admin.
           </DialogDescription>
         </DialogHeader>
         
