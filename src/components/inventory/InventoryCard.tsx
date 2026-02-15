@@ -6,8 +6,9 @@ import { Edit2, Trash2 } from 'lucide-react';
 
 interface InventoryCardProps {
   item: InventoryItem;
-  onEdit: (item: InventoryItem) => void;
-  onDelete: (id: string) => void;
+  // Kita buat optional (?) agar bisa dihandle saat mode read-only
+  onEdit?: (item: InventoryItem) => void;
+  onDelete?: (id: string) => void;
 }
 
 const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit, onDelete }) => {
@@ -65,22 +66,24 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit, onDelete })
         </div>
       </div>
 
-      {/* Action buttons */}
-      <div className="flex gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button 
-          onClick={() => onEdit(item)}
-          className="flex-1 btn-kawaii bg-primary text-primary-foreground py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold"
-        >
-          <Edit2 size={16} />
-          Edit
-        </button>
-        <button 
-          onClick={() => onDelete(item.id)}
-          className="btn-kawaii bg-destructive text-destructive-foreground py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold"
-        >
-          <Trash2 size={16} />
-        </button>
-      </div>
+      {/* Action buttons - HANYA MUNCUL JIKA onEdit DAN onDelete TERSEDIA (ADMIN MODE) */}
+      {onEdit && onDelete && (
+        <div className="flex gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button 
+            onClick={() => onEdit(item)}
+            className="flex-1 btn-kawaii bg-primary text-primary-foreground py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold"
+          >
+            <Edit2 size={16} />
+            Edit
+          </button>
+          <button 
+            onClick={() => onDelete(item.id)}
+            className="btn-kawaii bg-destructive text-destructive-foreground py-2 px-4 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold"
+          >
+            <Trash2 size={16} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
