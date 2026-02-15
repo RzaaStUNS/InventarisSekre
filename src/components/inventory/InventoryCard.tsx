@@ -67,7 +67,7 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit, onDelete })
       </div>
 
       {/* Action buttons - HANYA MUNCUL JIKA onEdit DAN onDelete TERSEDIA (ADMIN MODE) */}
-      {onEdit && onDelete && (
+     {onEdit && onDelete && (
         <div className="flex gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button 
             onClick={() => onEdit(item)}
