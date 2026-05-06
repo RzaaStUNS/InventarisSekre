@@ -1,6 +1,5 @@
 export type Category = 'Elektronik' | 'Alat Makan' | 'Alat Tulis' | 'Non Elektronik Lainnya';
 
-// Definisikan tipe untuk Sub Kategori Map
 export type SubCategoryMap = {
   'Elektronik': string[];
   'Alat Makan': string[];
@@ -21,7 +20,6 @@ export const UNITS = ['Pcs', 'Unit', 'Buah', 'Set', 'Rim', 'Box', 'Lembar', 'Gul
 export const CONDITIONS = ['Baik', 'Rusak Ringan', 'Rusak Berat', 'Dibuang'];
 export const STATUSES = ['Ada', 'Hilang'];
 
-// Kita buat type alias biar komponen lain yang import 'Status' atau 'Unit' tidak error
 export type Unit = typeof UNITS[number];
 export type Condition = typeof CONDITIONS[number];
 export type Status = typeof STATUSES[number];
@@ -36,6 +34,7 @@ export interface InventoryItem {
   satuan: string;
   kondisi: string;
   status: string;
+  imageUrl?: string; // Tambahkan ini agar bisa menampung URL foto barang
   createdAt: string;
   updatedAt: string;
 }
