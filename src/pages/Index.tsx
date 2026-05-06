@@ -16,6 +16,7 @@ const Index = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
 
+  // 1. Ambil state baru (subCategoryFilter & sortBy) dari hook
   const {
     items,
     allItems,
@@ -23,12 +24,15 @@ const Index = () => {
     setSearchQuery,
     categoryFilter,
     setCategoryFilter,
+    subCategoryFilter,    // <--- TAMBAHKAN INI
+    setSubCategoryFilter, // <--- TAMBAHKAN INI
     conditionFilter,
     setConditionFilter,
+    sortBy,               // <--- TAMBAHKAN INI
+    setSortBy,            // <--- TAMBAHKAN INI
     addItem,
     updateItem,
     deleteItem,
-    // AMBIL STATE ADMIN DARI HOOKS
     isAdmin,
     loginAsAdmin,
     logoutAdmin
@@ -73,15 +77,20 @@ const Index = () => {
         return (
           <InventoryView
             items={items}
+            allItems={allItems} // <--- PASTIKAN INI TERKIRIM
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             categoryFilter={categoryFilter}
             onCategoryChange={(val) => setCategoryFilter(val as Category | 'all')}
+            // 2. Kirim props filter & sort baru ke InventoryView
+            subCategoryFilter={subCategoryFilter}
+            onSubCategoryChange={setSubCategoryFilter}
             conditionFilter={conditionFilter}
             onConditionChange={(val) => setConditionFilter(val as Condition | 'all')}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
             onEdit={handleOpenEdit}
             onDelete={deleteItem}
-            // KIRIM PROPS ADMIN KE VIEW
             isAdmin={isAdmin}
             onAdminLogin={loginAsAdmin}
             onAdminLogout={logoutAdmin}
@@ -106,7 +115,6 @@ const Index = () => {
         </main>
       </div>
 
-      {/* TOMBOL TAMBAH HANYA MUNCUL JIKA ADMIN */}
       {isAdmin && (
         <FloatingActionButton onClick={() => setShowForm(true)} />
       )}
