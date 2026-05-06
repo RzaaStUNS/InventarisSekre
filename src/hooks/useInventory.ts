@@ -7,13 +7,16 @@ export const useInventory = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // Admin Control State (Per Sesi)
+  // Admin Control State
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // State Filtering & Sorting
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<Category | 'all'>('all');
+  const [subCategoryFilter, setSubCategoryFilter] = useState<string | 'all'>('all'); // Filter baru
   const [statusFilter, setStatusFilter] = useState<Status | 'all'>('all');
   const [conditionFilter, setConditionFilter] = useState<Condition | 'all'>('all');
+  const [sortBy, setSortBy] = useState<'newest' | 'oldest'>('newest'); // Sort baru
 
   const fetchItems = useCallback(async () => {
     setIsLoading(true);
@@ -59,8 +62,9 @@ export const useInventory = () => {
     setIsAdmin(false);
   }, []);
 
+  // CRUD Actions
   const addItem = useCallback(async (newItemData: any) => {
-    if (!isAdmin) return; // Guard logic
+    if (!isAdmin) return;
     try {
       const response = await api.post('/inventories', newItemData);
       await fetchItems();
@@ -96,18 +100,29 @@ export const useInventory = () => {
     }
   }, [isAdmin]);
 
+  // Logic Filter & Sort Terintegrasi
   const filteredItems = useMemo(() => {
-    return items.filter(item => {
+    let result = items.filter(item => {
       const safeNama = (item.namaBarang || '').toLowerCase();
       const safeNomor = (item.nomorBarang || '').toLowerCase();
       const safeSearch = searchQuery.toLowerCase();
+      
       const matchesSearch = safeNama.includes(safeSearch) || safeNomor.includes(safeSearch);
       const matchesCategory = categoryFilter === 'all' || item.kategori === categoryFilter;
+      const matchesSubCategory = subCategoryFilter === 'all' || item.subKategori === subCategoryFilter;
       const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
       const matchesCondition = conditionFilter === 'all' || item.kondisi === conditionFilter;
-      return matchesSearch && matchesCategory && matchesStatus && matchesCondition;
+      
+      return matchesSearch && matchesCategory && matchesSubCategory && matchesStatus && matchesCondition;
     });
-  }, [items, searchQuery, categoryFilter, statusFilter, conditionFilter]);
+
+    // Sorting berdasarkan updatedAt
+    return result.sort((a, b) => {
+      const dateA = new Date(a.updatedAt || 0).getTime();
+      const dateB = new Date(b.updatedAt || 0).getTime();
+      return sortBy === 'newest' ? dateB - dateA : dateA - dateB;
+    });
+  }, [items, searchQuery, categoryFilter, subCategoryFilter, statusFilter, conditionFilter, sortBy]);
 
   return {
     items: filteredItems,
@@ -118,10 +133,14 @@ export const useInventory = () => {
     setSearchQuery,
     categoryFilter,
     setCategoryFilter,
+    subCategoryFilter,    // Return baru
+    setSubCategoryFilter, // Return baru
     statusFilter,
     setStatusFilter,
     conditionFilter,
     setConditionFilter,
+    sortBy,               // Return baru
+    setSortBy,            // Return baru
     isAdmin,
     loginAsAdmin,
     logoutAdmin,
