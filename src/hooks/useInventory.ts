@@ -7,8 +7,10 @@ export const useInventory = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
+  // Admin Control State
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // State Filtering & Sorting
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<Category | 'all'>('all');
   const [subCategoryFilter, setSubCategoryFilter] = useState<string | 'all'>('all');
@@ -30,8 +32,10 @@ export const useInventory = () => {
         satuan: item.satuan,
         kondisi: item.kondisi,
         status: item.status,
-        // Mapping Gambar: Jika ada dari backend, arahkan ke URL Storage Laravel
-        imageUrl: item.image_url ? `https://api.zaza.my.id/storage/${item.image_url}` : undefined,
+        // UPDATE PATH GAMBAR: Langsung ke folder inventory_images di root publik CWP kamu
+        imageUrl: item.image_url 
+          ? `https://api.zaza.my.id/inventory_images/${item.image_url}` 
+          : undefined,
         createdAt: item.created_at,
         updatedAt: item.updated_at,
       }));
@@ -49,6 +53,7 @@ export const useInventory = () => {
     fetchItems();
   }, [fetchItems]);
 
+  // Logic Admin - Password sesuai permintaan kamu
   const loginAsAdmin = useCallback((password: string) => {
     if (password === 'SekreEM_Periode2026') {
       setIsAdmin(true);
@@ -61,6 +66,7 @@ export const useInventory = () => {
     setIsAdmin(false);
   }, []);
 
+  // CRUD Actions
   const addItem = useCallback(async (newItemData: any) => {
     if (!isAdmin) return;
     try {
@@ -76,6 +82,7 @@ export const useInventory = () => {
   const updateItem = useCallback(async (id: string, updates: Partial<InventoryItem>) => {
     if (!isAdmin) return;
     try {
+      // Laravel butuh spoofing _method PUT untuk update data
       await api.post(`/inventories/${id}`, {
         ...updates,
         _method: 'PUT'
@@ -98,6 +105,7 @@ export const useInventory = () => {
     }
   }, [isAdmin]);
 
+  // Logic Filter & Sort
   const filteredItems = useMemo(() => {
     let result = items.filter(item => {
       const safeNama = (item.namaBarang || '').toLowerCase();

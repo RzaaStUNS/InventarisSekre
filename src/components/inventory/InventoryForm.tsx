@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { X, Sparkles, HelpCircle } from 'lucide-react';
 import { StarDecor, HeartDecor, FlowerDecor } from '@/components/icons/KawaiiIcons';
 
-interface InventoryFormProps {
+interface InventoryFormProps {  
   item?: InventoryItem | null;
   nextItemNumber: string;
   onSubmit: (data: Omit<InventoryItem, 'id' | 'nomorBarang' | 'createdAt' | 'updatedAt'>) => void;
