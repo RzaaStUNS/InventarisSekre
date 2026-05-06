@@ -2,16 +2,27 @@ import React from 'react';
 import { InventoryItem } from '@/types/inventory';
 import { getSubCategoryIcon, CheckIcon, CrossIcon } from '@/components/icons/KawaiiIcons';
 import { Badge } from '@/components/ui/badge';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2, CalendarDays, Clock } from 'lucide-react'; // Tambah icon baru
+import { format } from 'date-fns'; // Biasanya library ini sudah ada di template shadcn
+import { id } from 'date-fns/locale';
 
 interface InventoryCardProps {
   item: InventoryItem;
-  // Kita buat optional (?) agar bisa dihandle saat mode read-only
   onEdit?: (item: InventoryItem) => void;
   onDelete?: (id: string) => void;
 }
 
 const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit, onDelete }) => {
+  // Helper fungsi untuk merapikan format tanggal
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return '-';
+    try {
+      return format(new Date(dateString), 'dd MMM yyyy', { locale: id });
+    } catch {
+      return '-';
+    }
+  };
+
   return (
     <div className="card-kawaii p-5 relative overflow-hidden group">
       {/* Decorative corner ribbon */}
@@ -66,8 +77,20 @@ const InventoryCard: React.FC<InventoryCardProps> = ({ item, onEdit, onDelete })
         </div>
       </div>
 
-      {/* Action buttons - HANYA MUNCUL JIKA onEdit DAN onDelete TERSEDIA (ADMIN MODE) */}
-     {onEdit && onDelete && (
+      {/* SEKSI TIMESTAMP (BARU) */}
+      <div className="mt-4 pt-3 border-t border-dashed border-muted flex flex-col gap-1.5 text-[10px] text-muted-foreground uppercase font-bold tracking-tight">
+        <div className="flex items-center gap-1.5">
+          <CalendarDays size={12} className="text-primary/60" />
+          <span>Dibuat: {formatDate(item.createdAt)}</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <Clock size={12} className="text-secondary" />
+          <span>Update: {formatDate(item.updatedAt)}</span>
+        </div>
+      </div>
+
+      {/* Action buttons */}
+      {onEdit && onDelete && (
         <div className="flex gap-2 mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button 
             onClick={() => onEdit(item)}
