@@ -7,10 +7,8 @@ export const useInventory = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  // Admin Control State
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // State Filtering & Sorting
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<Category | 'all'>('all');
   const [subCategoryFilter, setSubCategoryFilter] = useState<string | 'all'>('all');
@@ -32,7 +30,7 @@ export const useInventory = () => {
         satuan: item.satuan,
         kondisi: item.kondisi,
         status: item.status,
-        // UPDATE PATH GAMBAR: Langsung ke folder inventory_images di root publik CWP kamu
+        // Path mengarah ke folder publik di CWP lo
         imageUrl: item.image_url 
           ? `https://api.zaza.my.id/inventory_images/${item.image_url}` 
           : undefined,
@@ -53,7 +51,6 @@ export const useInventory = () => {
     fetchItems();
   }, [fetchItems]);
 
-  // Logic Admin - Password sesuai permintaan kamu
   const loginAsAdmin = useCallback((password: string) => {
     if (password === 'SekreEM_Periode2026') {
       setIsAdmin(true);
@@ -66,30 +63,41 @@ export const useInventory = () => {
     setIsAdmin(false);
   }, []);
 
-  // CRUD Actions
-  const addItem = useCallback(async (newItemData: any) => {
+  // CRUD Actions dengan dukung FormData (Upload File)
+  const addItem = useCallback(async (formData: FormData) => {
     if (!isAdmin) return;
+    setIsLoading(true);
     try {
-      const response = await api.post('/inventories', newItemData);
+      const response = await api.post('/inventories', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
       await fetchItems();
       return response.data;
     } catch (err) {
       console.error('Gagal tambah item:', err);
       throw err;
+    } finally {
+      setIsLoading(false);
     }
   }, [fetchItems, isAdmin]);
 
-  const updateItem = useCallback(async (id: string, updates: Partial<InventoryItem>) => {
+  const updateItem = useCallback(async (id: string, formData: FormData) => {
     if (!isAdmin) return;
+    setIsLoading(true);
     try {
-      // Laravel butuh spoofing _method PUT untuk update data
-      await api.post(`/inventories/${id}`, {
-        ...updates,
-        _method: 'PUT'
+      // Laravel butuh spoofing _method PUT kalau kirim file via POST
+      if (!formData.has('_method')) {
+        formData.append('_method', 'PUT');
+      }
+
+      await api.post(`/inventories/${id}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
       });
       await fetchItems(); 
     } catch (err) {
       console.error('Gagal update item:', err);
+    } finally {
+      setIsLoading(false);
     }
   }, [fetchItems, isAdmin]);
 
@@ -105,7 +113,6 @@ export const useInventory = () => {
     }
   }, [isAdmin]);
 
-  // Logic Filter & Sort
   const filteredItems = useMemo(() => {
     let result = items.filter(item => {
       const safeNama = (item.namaBarang || '').toLowerCase();
@@ -143,7 +150,7 @@ export const useInventory = () => {
     setStatusFilter,
     conditionFilter,
     setConditionFilter,
-    sortBy,
+    sortBy, 
     setSortBy,
     isAdmin,
     loginAsAdmin,
