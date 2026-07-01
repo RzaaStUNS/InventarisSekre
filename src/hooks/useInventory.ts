@@ -33,7 +33,7 @@ export const useInventory = () => {
         satuan: item.satuan,
         kondisi: item.kondisi,
         status: item.status,
-        // UPDATE PATH GAMBAR: Langsung ke folder inventory_images di root publik CWP kamu
+        // Path mengarah ke folder publik di CWP Mas Abim
         imageUrl: item.image_url 
           ? `https://api.zaza.my.id/inventory_images/${item.image_url}` 
           : undefined,
@@ -54,7 +54,7 @@ export const useInventory = () => {
     fetchItems();
   }, [fetchItems]);
 
-  // Logic Admin - Password
+  // Logic Admin - Password default E-MAILKOMP
   const loginAsAdmin = useCallback((password: string) => {
     if (password === 'SekreEM_Periode2026') {
       setIsAdmin(true);
@@ -67,7 +67,7 @@ export const useInventory = () => {
     setIsAdmin(false);
   }, []);
 
-  // CRUD Actions dengan dukungan FormData (Upload File)
+  // CRUD Actions dengan dukungan FormData (Upload File/Video)
   const addItem = useCallback(async (formData: FormData) => {
     if (!isAdmin) return;
     setIsLoading(true);
@@ -140,10 +140,9 @@ export const useInventory = () => {
     });
   }, [items, searchQuery, categoryFilter, subCategoryFilter, statusFilter, conditionFilter, sortBy]);
 
-  // Handler Export
-  const handleExport = useCallback(() => {
-    // Ekspor data yang difilter saja (apa yang tampil di layar)
-    exportToCSV(filteredItems, 'Data_Inventaris_Sekre');
+  // Handler Export - Sekarang menerima parameter selectedColumns dari Modal Index.tsx
+  const handleExport = useCallback((selectedColumns?: string[]) => {
+    exportToCSV(filteredItems, 'Data_Inventaris_Sekre', selectedColumns);
   }, [filteredItems]);
 
   return {
@@ -170,6 +169,6 @@ export const useInventory = () => {
     updateItem,
     deleteItem,
     refreshItems: fetchItems,
-    exportData: handleExport, // Menyediakan fungsi export ke Index.tsx
+    exportData: handleExport, // Fungsi yang dipanggil di tombol modal Index.tsx
   };
 };
