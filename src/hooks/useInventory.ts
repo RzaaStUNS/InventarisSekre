@@ -1,14 +1,17 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { InventoryItem, Category, Condition, Status } from '@/types/inventory';
 import api from '@/lib/api';
+import { exportToCSV } from '@/lib/utils';
 
 export const useInventory = () => {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
+  // Admin Control State
   const [isAdmin, setIsAdmin] = useState(false);
 
+  // State Filtering & Sorting
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<Category | 'all'>('all');
   const [subCategoryFilter, setSubCategoryFilter] = useState<string | 'all'>('all');
@@ -30,7 +33,7 @@ export const useInventory = () => {
         satuan: item.satuan,
         kondisi: item.kondisi,
         status: item.status,
-        // Path mengarah ke folder publik di CWP lo
+        // UPDATE PATH GAMBAR: Langsung ke folder inventory_images di root publik CWP kamu
         imageUrl: item.image_url 
           ? `https://api.zaza.my.id/inventory_images/${item.image_url}` 
           : undefined,
@@ -51,6 +54,7 @@ export const useInventory = () => {
     fetchItems();
   }, [fetchItems]);
 
+  // Logic Admin - Password
   const loginAsAdmin = useCallback((password: string) => {
     if (password === 'SekreEM_Periode2026') {
       setIsAdmin(true);
@@ -63,7 +67,7 @@ export const useInventory = () => {
     setIsAdmin(false);
   }, []);
 
-  // CRUD Actions dengan dukung FormData (Upload File)
+  // CRUD Actions dengan dukungan FormData (Upload File)
   const addItem = useCallback(async (formData: FormData) => {
     if (!isAdmin) return;
     setIsLoading(true);
@@ -113,6 +117,7 @@ export const useInventory = () => {
     }
   }, [isAdmin]);
 
+  // Logic Filter & Sort
   const filteredItems = useMemo(() => {
     let result = items.filter(item => {
       const safeNama = (item.namaBarang || '').toLowerCase();
@@ -134,6 +139,12 @@ export const useInventory = () => {
       return sortBy === 'newest' ? dateB - dateA : dateA - dateB;
     });
   }, [items, searchQuery, categoryFilter, subCategoryFilter, statusFilter, conditionFilter, sortBy]);
+
+  // Handler Export
+  const handleExport = useCallback(() => {
+    // Ekspor data yang difilter saja (apa yang tampil di layar)
+    exportToCSV(filteredItems, 'Data_Inventaris_Sekre');
+  }, [filteredItems]);
 
   return {
     items: filteredItems,
@@ -159,5 +170,6 @@ export const useInventory = () => {
     updateItem,
     deleteItem,
     refreshItems: fetchItems,
+    exportData: handleExport, // Menyediakan fungsi export ke Index.tsx
   };
 };

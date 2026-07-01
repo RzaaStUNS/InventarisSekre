@@ -10,13 +10,13 @@ import DashboardView from '@/components/views/DashboardView';
 import InventoryView from '@/components/views/InventoryView';
 import StatisticsView from '@/components/views/StatisticsView';
 import SettingsView from '@/components/views/SettingsView';
+import { Download } from 'lucide-react'; // <--- 1. TAMBAHKAN IMPORT ICON INI
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
 
-  // 1. Ambil state baru (subCategoryFilter & sortBy) dari hook
   const {
     items,
     allItems,
@@ -24,18 +24,19 @@ const Index = () => {
     setSearchQuery,
     categoryFilter,
     setCategoryFilter,
-    subCategoryFilter,    // <--- TAMBAHKAN INI
-    setSubCategoryFilter, // <--- TAMBAHKAN INI
+    subCategoryFilter,
+    setSubCategoryFilter,
     conditionFilter,
     setConditionFilter,
-    sortBy,               // <--- TAMBAHKAN INI
-    setSortBy,            // <--- TAMBAHKAN INI
+    sortBy,
+    setSortBy,
     addItem,
     updateItem,
     deleteItem,
     isAdmin,
     loginAsAdmin,
-    logoutAdmin
+    logoutAdmin,
+    exportData // <--- 2. PANGGIL FUNGSI EXPORT DARI HOOK
   } = useInventory();
 
   const handleAddItem = async (data: Omit<InventoryItem, 'id' | 'nomorBarang' | 'createdAt' | 'updatedAt'>) => {
@@ -77,12 +78,11 @@ const Index = () => {
         return (
           <InventoryView
             items={items}
-            allItems={allItems} // <--- PASTIKAN INI TERKIRIM
+            allItems={allItems}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             categoryFilter={categoryFilter}
             onCategoryChange={(val) => setCategoryFilter(val as Category | 'all')}
-            // 2. Kirim props filter & sort baru ke InventoryView
             subCategoryFilter={subCategoryFilter}
             onSubCategoryChange={setSubCategoryFilter}
             conditionFilter={conditionFilter}
@@ -110,7 +110,21 @@ const Index = () => {
       <FloatingBackground />
       <div className="relative z-10 pb-32">
         <Header totalItems={allItems.length} />
+        
         <main className="max-w-6xl mx-auto px-4">
+          {/* 3. TOMBOL EXPORT KHUSUS DI TAB INVENTORY */}
+          {activeTab === 'inventory' && (
+            <div className="flex justify-end mb-4 relative z-20">
+              <button 
+                onClick={exportData}
+                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-emerald-400 to-teal-500 text-white font-bold text-sm rounded-2xl shadow-float hover:scale-105 active:scale-95 transition-all border-2 border-white/20"
+              >
+                <Download size={18} />
+                Export CSV
+              </button>
+            </div>
+          )}
+
           {renderActiveView()}
         </main>
       </div>
